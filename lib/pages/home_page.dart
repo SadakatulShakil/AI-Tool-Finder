@@ -66,10 +66,25 @@ class HomePage extends StatelessWidget {
             // 🧠 Filtered Tools List
             Expanded(
               child: Obx(() {
+                if (controller.tools.isEmpty || controller.categories.isEmpty || controller.tagsMap.isEmpty) {
+                  return Center(child: CircularProgressIndicator());
+                }
                 final results = controller.filteredTools;
 
                 if (results.isEmpty) {
-                  return Center(child: Text("No tools found."));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("No tools found."),
+                        SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: controller.fetchHomeData,
+                          child: Text("Reload"),
+                        ),
+                      ],
+                    ),
+                  );
                 }
 
                 return ListView.builder(
@@ -84,10 +99,19 @@ class HomePage extends StatelessWidget {
                         title: Text(tool['name'] ?? "No name"),
                         subtitle: Text(tool['description'] ?? "No description"),
                         trailing: Text(tool['isFree'] == true ? "Free" : "Paid"),
-                        onTap: () {
-                          // 🚀 Open tool link or page
-                          Get.to(() => ToolDetailPage(tool: tool));
-                        },
+                          onTap: () {
+                            final selectedCategory = tool['category'];
+                            final similar = controller.filteredTools.where((t) =>
+                            t['id'] != tool['id'] && t['category'] == selectedCategory
+                            ).toList();
+
+                            Get.to(() => ToolDetailPage(
+                              tool: tool,
+                              allCategories: controller.categoriesMap,
+                              allTags: controller.tagsMap,
+                              similarTools: similar,
+                            ));
+                          }
                       ),
                     );
                   },

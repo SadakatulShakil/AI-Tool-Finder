@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 import '../pages/profile_page.dart';
+import '../pages/wishlist_page.dart';
 
 class AppDrawer extends StatelessWidget {
   final authController = Get.find<AuthController>();
@@ -36,6 +37,7 @@ class AppDrawer extends StatelessWidget {
             title: Text("Wishlist"),
             onTap: () {
               // Navigate to wishlist
+              Get.to(() => WishlistPage(), transition: Transition.rightToLeft, duration: Duration(milliseconds: 300));
             },
           ),
           ListTile(
