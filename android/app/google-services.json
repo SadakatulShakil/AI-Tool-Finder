@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "842588266033",
+    "project_id": "toolfinder-70193",
+    "storage_bucket": "toolfinder-70193.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842588266033:android:31c4563f9b03ca8b25ff10",
+        "android_client_info": {
+          "package_name": "com.samtechnology.tool_finder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1CFmg1EQD0mxJGr0tt2hTJs_K7E-qsoY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
