@@ -41,6 +41,24 @@ class HomeController extends GetxController {
     await userRef.update({"wishlist": currentWishlist});
   }
 
+  List<Map<String, dynamic>> suggestToolsFromMessage(String message) {
+    final keywords = message
+        .toLowerCase()
+        .split(RegExp(r'\W+')) // split on non-word characters
+        .where((w) => w.length > 2)
+        .toList();
+
+    return tools.where((tool) {
+      final name = (tool['name'] ?? '').toString().toLowerCase();
+      final desc = (tool['description'] ?? '').toString().toLowerCase();
+      final tags = (tool['tags'] ?? []).join(' ').toLowerCase();
+      final allContent = "$name $desc $tags";
+
+      return keywords.any((word) => allContent.contains(word));
+    }).toList().cast<Map<String, dynamic>>().take(5).toList(); // top 5
+  }
+
+
   Future<List<Map<String, dynamic>>> getWishlistTools() async {
     final userPhone = GetStorage().read('userId');
     if (userPhone == null) return [];
@@ -67,6 +85,9 @@ class HomeController extends GetxController {
     return currentWishlist.contains(toolId);
   }
 
+  Map<String, dynamic>? getToolById(String id) {
+    return filteredTools.firstWhereOrNull((tool) => tool['id'] == id);
+  }
 
   bool isInWishlist(String toolId) {
     final userPhone = GetStorage().read('phone');

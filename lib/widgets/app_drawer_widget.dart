@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tool_finder/pages/chat_history_page.dart';
 import '../controllers/auth_controller.dart';
 import '../pages/profile_page.dart';
 import '../pages/wishlist_page.dart';
@@ -20,7 +21,7 @@ class AppDrawer extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Get.to(() => ProfilePage(), transition: Transition.rightToLeft, duration: Duration(milliseconds: 300));
+              Get.to(() => ProfilePage(isBackButton: true,), transition: Transition.rightToLeft, duration: Duration(milliseconds: 300));
             },
             child: UserAccountsDrawerHeader(
               accountName: Text(name),
@@ -38,6 +39,14 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               // Navigate to wishlist
               Get.to(() => WishlistPage(), transition: Transition.rightToLeft, duration: Duration(milliseconds: 300));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.chat),
+            title: Text("Ai Chat History"),
+            onTap: () {
+              // Navigate to wishlist
+              Get.to(() => ChatHistoryPage(), transition: Transition.rightToLeft, duration: Duration(milliseconds: 300));
             },
           ),
           ListTile(

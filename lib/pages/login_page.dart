@@ -59,10 +59,36 @@ class LoginPage extends StatelessWidget {
               },
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: controller.loginUser,
-              child: Text('Login'),
-            ),
+            Obx(() {
+              if (controller.isLoading.value) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.deepPurpleAccent,
+                  ),
+                );
+              }
+              return ElevatedButton(
+                onPressed: controller.loginUser,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 50),
+                ),
+                child: Text('Login'),
+              );
+            }),
+
+            // Error Message
+            Obx(() {
+              if (controller.errorMessage.value.isNotEmpty) {
+                return Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text(
+                    controller.errorMessage.value,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            }),
           ],
         ),
       ),

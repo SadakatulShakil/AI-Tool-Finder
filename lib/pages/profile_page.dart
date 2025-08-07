@@ -3,7 +3,15 @@ import 'package:get/get.dart';
 
 import '../controllers/profile_controllers.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  final bool isBackButton;
+  ProfilePage({super.key, required this.isBackButton});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   final controller = Get.put(ProfileController());
 
   @override

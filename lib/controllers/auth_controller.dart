@@ -1,8 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tool_finder/pages/login_page.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:tool_finder/pages/navigation_view.dart';
 import '../pages/home_page.dart';
 
 class AuthController extends GetxController {
@@ -10,7 +12,8 @@ class AuthController extends GetxController {
   final dobController = TextEditingController();
   final box = GetStorage();
   final database = FirebaseDatabase.instance.ref();
-
+  final isLoading = false.obs;
+  final errorMessage = ''.obs;
   var isLoggedIn = false.obs;
   var userData = {}.obs;
 
@@ -28,30 +31,54 @@ class AuthController extends GetxController {
   }
 
   Future<void> loginUser() async {
-    final phone = phoneController.text.trim();
-    final dob = dobController.text.trim();
-    final userId = phone.replaceAll("+", "").replaceAll(" ", "");
-    final userRef = database.child("users/$userId");
+    try{
+      isLoading(true);
+      errorMessage('');
 
-    final snapshot = await userRef.get();
-    if (!snapshot.exists) {
-      await userRef.set({
-        "phone": phone,
-        "dob": dob,
-        "created_at": DateTime.now().toIso8601String(),
-        "name": "",
-        "email": "",
-        "wishlist": [],
-        "search_history": [],
-        "preferred_categories": [],
-        "profile_image": "",
-      });
+      final phone = phoneController.text.trim();
+      final dob = dobController.text.trim();
+
+          if (phone.isEmpty || dob.isEmpty) {
+            throw 'Please fill in all fields';
+          }
+
+      final userId = phone.replaceAll("+", "").replaceAll(" ", "");
+      final userRef = database.child("users/$userId");
+      final snapshot = await userRef.get();
+      if (!snapshot.exists) {
+        await userRef.set({
+          "phone": phone,
+          "dob": dob,
+          "created_at": DateTime.now().toIso8601String(),
+          "name": "",
+          "email": "",
+          "wishlist": [],
+          "search_history": [],
+          "preferred_categories": [],
+          "profile_image": "",
+        });
+      }
+
+      box.write('userId', userId);
+      fetchUserData(userId);
+
+      isLoggedIn.value = true;
+
+      Get.offAll(() => NavigationView(),
+          transition: Transition.rightToLeft,
+          duration: Duration(milliseconds: 300));
+
+    }catch(e){
+          Get.snackbar(
+              'Login Error',
+              errorMessage(e.toString()),
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white
+          );
+    }finally {
+      isLoading.value = false;
     }
-
-    box.write('userId', userId);
-    fetchUserData(userId);
-    isLoggedIn.value = true;
-    Get.to(() => HomePage(), transition: Transition.rightToLeft, duration: Duration(milliseconds: 300));
   }
 
   void fetchUserData(String userId) async {

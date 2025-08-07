@@ -42,10 +42,9 @@ class WishlistPage extends StatelessWidget {
                         t['category'] == selectedCategory).toList();
 
                     Get.to(() => ToolDetailPage(
-                      tool: tool,
+                      initialToolId: tool['id'],
                       allCategories: controller.categoriesMap,
                       allTags: controller.tagsMap,
-                      similarTools: similar,
                     ));
                   },
                 ),
