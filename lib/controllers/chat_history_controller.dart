@@ -46,6 +46,14 @@ class ChatHistoryController extends GetxController {
       final messages = data.values
           .map((e) => Map<String, String>.from(e as Map))
           .toList();
+
+      // ✅ Sort by timestamp ASCENDING
+      messages.sort((a, b) {
+        final aTime = DateTime.tryParse(a['timestamp'] ?? '') ?? DateTime.now();
+        final bTime = DateTime.tryParse(b['timestamp'] ?? '') ?? DateTime.now();
+        return aTime.compareTo(bTime); // ascending
+      });
+
       return messages;
     }
 

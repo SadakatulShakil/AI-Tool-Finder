@@ -241,9 +241,9 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
             Row(
               children: [
                 Chip(
-                  label: Text(tool['is_free'] == true ? 'Free' : 'Paid'),
+                  label: Text(tool['isFree'] == true ? 'Free' : 'Paid'),
                   backgroundColor:
-                  tool['is_free'] == true ? Colors.green : Colors.red,
+                  tool['isFree'] == true ? Colors.green : Colors.red,
                   labelStyle: TextStyle(color: Colors.white),
                 ),
                 SizedBox(width: 10),

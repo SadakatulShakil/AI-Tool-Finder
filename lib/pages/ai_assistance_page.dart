@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../controllers/chat_controller.dart';
 
-class AiAssistancePage extends StatelessWidget {
+class AiAssistancePage extends StatefulWidget {
+  final String? date;
+  final bool isFromHistory;
+  AiAssistancePage({this.date, this.isFromHistory = false});
+
+  @override
+  State<AiAssistancePage> createState() => _AiAssistancePageState();
+}
+
+class _AiAssistancePageState extends State<AiAssistancePage> {
   final ChatController controller = Get.put(ChatController(), permanent: false);
-  final List<Map<String, String>>? initialMessages;
-
-  AiAssistancePage({Key? key, this.initialMessages}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-// Load initial messages only if controller is empty
-    if (initialMessages != null && controller.messages.isEmpty) {
-      controller.messages.addAll(initialMessages!);
+    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    if (widget.isFromHistory) {
+      controller.loadMessagesByDate(widget.date ?? today);
+    } else {
+      controller.loadMessagesByDate(today);
     }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('AI Assistant'),

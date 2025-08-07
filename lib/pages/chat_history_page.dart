@@ -34,10 +34,10 @@ class ChatHistoryPage extends StatelessWidget {
               title: Text(date),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () async {
-                final messages = await controller.fetchMessagesByDate(date);
-                print('messages: $messages');
-                //Get.delete<ChatController>(); // 🧹 clear old state
-                Get.to(() => AiAssistancePage(initialMessages: messages));
+                //final messages = await controller.fetchMessagesByDate(date);
+                //print('messages: $messages');
+                Get.delete<ChatController>(); // 🧹 clear old state
+                Get.to(() => AiAssistancePage(date: date, isFromHistory: true));
               },
             );
           },

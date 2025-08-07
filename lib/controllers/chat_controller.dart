@@ -13,6 +13,8 @@ class ChatController extends GetxController {
 
   final database = FirebaseDatabase.instance;
   final box = GetStorage();
+  // 🗓 Format date like '2025-08-08'
+  String get todayDate => DateFormat('yyyy-MM-dd').format(DateTime.now());
   // Optional: Used for daily greeting timestamp
   DateTime? lastGreetingShown;
 
@@ -20,6 +22,7 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
     _maybeSendGreeting();
+    //_loadTodayChat();
   }
 
   void sendMessage(String text) {
@@ -99,6 +102,43 @@ class ChatController extends GetxController {
 
     final ref = database.ref("users/$userId/chat_history/$dateKey");
     await ref.push().set(msg);
+  }
+
+  /// ✅ Loads today's messages from Firebase
+  void loadMessagesByDate(String date) async {
+    final todayMessages = await fetchMessagesByDate(date);
+    messages.addAll(todayMessages);
+
+    Future.delayed(Duration(milliseconds: 200), () {
+      _scrollToBottom();
+    });
+  }
+
+  /// 📥 Fetch chat messages from Firebase by date
+  Future<List<Map<String, String>>> fetchMessagesByDate(String date) async {
+    final userId = box.read('userId');
+    if (userId == null) return [];
+
+    final ref = database.ref('users/$userId/chat_history/$date');
+    final snapshot = await ref.get();
+
+    if (snapshot.exists) {
+      final data = Map<String, dynamic>.from(snapshot.value as Map);
+      final messages = data.values
+          .map((e) => Map<String, String>.from(e as Map))
+          .toList();
+
+      // ✅ Sort by timestamp ASCENDING
+      messages.sort((a, b) {
+        final aTime = DateTime.tryParse(a['timestamp'] ?? '') ?? DateTime.now();
+        final bTime = DateTime.tryParse(b['timestamp'] ?? '') ?? DateTime.now();
+        return aTime.compareTo(bTime); // ascending
+      });
+
+      return messages;
+    }
+
+    return [];
   }
 
   void _maybeSendGreeting() {
