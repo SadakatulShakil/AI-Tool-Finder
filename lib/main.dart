@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: (context, child) {
           return GetMaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Tool Finder',
             theme: ThemeData(
               primarySwatch: Colors.blue,

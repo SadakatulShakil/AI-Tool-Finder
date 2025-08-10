@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../controllers/chat_controller.dart';
 
 class AiAssistancePage extends StatefulWidget {
@@ -15,15 +17,51 @@ class AiAssistancePage extends StatefulWidget {
 class _AiAssistancePageState extends State<AiAssistancePage> {
   final ChatController controller = Get.put(ChatController(), permanent: false);
 
+  List<TextSpan> _buildTextWithLinks(String text) {
+    final RegExp urlRegex = RegExp(r'(https?:\/\/[^\s]+)');
+    final matches = urlRegex.allMatches(text);
+    int lastIndex = 0;
+    List<TextSpan> spans = [];
+
+    for (var match in matches) {
+      if (match.start > lastIndex) {
+        spans.add(TextSpan(text: text.substring(lastIndex, match.start)));
+      }
+      final url = match.group(0)!;
+      spans.add(
+        TextSpan(
+          text: url,
+          style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+          recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse(url)),
+        ),
+      );
+      lastIndex = match.end;
+    }
+
+    if (lastIndex < text.length) {
+      spans.add(TextSpan(text: text.substring(lastIndex)));
+    }
+
+    return spans;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
     if (widget.isFromHistory) {
       controller.loadMessagesByDate(widget.date ?? today);
     } else {
       controller.loadMessagesByDate(today);
     }
+
+    //Scroll to bottom when page open
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.scrollController.hasClients) {
+        controller.scrollController.jumpTo(controller.scrollController.position.maxScrollExtent + 200);
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -50,15 +88,21 @@ class _AiAssistancePageState extends State<AiAssistancePage> {
                         maxWidth: MediaQuery.of(context).size.width * 0.75),
                     decoration: BoxDecoration(
                       color: isUser
-                          ? theme.colorScheme.primary
+                          ? Colors.deepPurpleAccent.shade100
                           : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: isUser
+                          ? BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                              bottomLeft: Radius.circular(20))
+                          : BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                              bottomRight: Radius.circular(20)),
                     ),
-                    child: Text(
-                      message['text'] ?? '',
-                      style: TextStyle(
-                        color: isUser ? Colors.white : Colors.black87,
-                        fontSize: 16,
+                    child: SelectableText.rich(
+                      TextSpan(
+                        children: _buildTextWithLinks(message['text'] ?? ''),
                       ),
                     ),
                   ),
@@ -76,7 +120,7 @@ class _AiAssistancePageState extends State<AiAssistancePage> {
                     controller: controller.messageController,
                     onSubmitted: (value) => controller.sendMessage(value),
                     decoration: InputDecoration(
-                      hintText: "Ask anything...",
+                      hintText: "Ask about AI tool...",
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 14),
                       border: OutlineInputBorder(

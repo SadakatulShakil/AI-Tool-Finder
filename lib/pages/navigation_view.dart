@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tool_finder/pages/test_page.dart';
 import '../controllers/chat_controller.dart';
 import '../controllers/navigation_controller.dart';
 import 'ai_assistance_page.dart';
@@ -25,6 +26,7 @@ class NavigationView extends GetView<NavigationController> {
         onPressed: () {
           Get.delete<ChatController>(); // 🧹 ensure clean controller
           Get.to(() => AiAssistancePage());
+          //Get.to(() => TestPage());
         },
         child: Image.asset('assets/images/ai_bot.png', height: 35.sp, width: 35.sp, fit: BoxFit.cover),
       ),
