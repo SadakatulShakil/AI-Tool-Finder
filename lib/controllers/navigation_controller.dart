@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:tool_finder/pages/ai_assistance_page.dart';
 import 'package:tool_finder/pages/home_page.dart';
 import 'package:tool_finder/pages/profile_page.dart';
 
@@ -250,7 +251,7 @@ class NavigationController extends GetxController {
   Widget get currentScreen {
     switch (currentTab.value) {
       case 0:
-        return HomePage(); // Make sure DashboardPage uses Obx for dynamic updates
+        return HomePage();
       case 1:
         return ProfilePage(isBackButton: false);
       default:
