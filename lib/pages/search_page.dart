@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
@@ -13,6 +15,14 @@ class _SearchPageState extends State<SearchPage> {
   final controller = Get.find<HomeController>();
   final textCtrl = TextEditingController();
   String selectedCat = '';
+
+  Color _getSoftRandomColor() {
+    final random = Random();
+    final hue = random.nextDouble() * 180; // 0 to 360
+    final hsl = HSLColor.fromAHSL(1.0, hue, 0.4, 0.85);
+    //saturation = 0.4 (soft), lightness = 0.85 (light pastel)
+    return hsl.toColor();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +72,7 @@ class _SearchPageState extends State<SearchPage> {
                 children: [
                   _CatPill(
                     label: 'All',
+                    color: _getSoftRandomColor(),
                     selected: selectedCat.isEmpty,
                     onTap: () => setState(() => selectedCat = ''),
                   ),
@@ -70,6 +81,7 @@ class _SearchPageState extends State<SearchPage> {
                       padding: const EdgeInsets.only(left: 8),
                       child: _CatPill(
                         label: c['name'] ?? '',
+                        color: _getSoftRandomColor(),
                         selected: selectedCat == c['id'],
                         onTap: () =>
                             setState(() => selectedCat = c['id']),
@@ -130,11 +142,13 @@ class _CatPill extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final Color color;
 
   const _CatPill({
     required this.label,
     required this.selected,
     required this.onTap,
+    required this.color,
   });
 
   @override
@@ -142,6 +156,7 @@ class _CatPill extends StatelessWidget {
     return ChoiceChip(
       label: Text(label),
       selected: selected,
+      selectedColor: color,
       onSelected: (_) => onTap(),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

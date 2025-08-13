@@ -12,7 +12,7 @@ class HorizontalToolScroller extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, i) {
           final t = items[i];
           return GestureDetector(
@@ -20,6 +20,7 @@ class HorizontalToolScroller extends StatelessWidget {
             child: SizedBox(
                 width: 120,
                 child: Card(
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: Stack(
                     children: [

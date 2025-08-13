@@ -69,9 +69,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 readOnly: true,
                 decoration: InputDecoration(
                   labelText: 'Date of Birth',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide(color: Colors.deepPurpleAccent),
                   ),
                   suffixIcon: Icon(Icons.calendar_today, color: Colors.deepPurpleAccent),
@@ -95,7 +95,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 icon: Icon(Icons.save),
                 label: Text("Update Profile"),
                 onPressed: controller.updateProfile,
-                style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50)),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    minimumSize: Size(double.infinity, 50)),
               ),
             ],
           ),
@@ -112,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
         readOnly: readOnly,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20),),
         ),
       ),
     );

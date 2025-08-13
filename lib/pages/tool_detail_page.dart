@@ -246,13 +246,19 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                         Chip(
                           label: Text(
                               tool['isFree'] == true ? 'Free' : 'Paid'),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           backgroundColor: tool['isFree'] == true
                               ? Colors.green
                               : Colors.red,
                           labelStyle: TextStyle(color: Colors.white),
                         ),
                         SizedBox(width: 10),
-                        Chip(label: Text(categoryName)),
+                        Chip(label: Text(categoryName)
+                          ,shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),),
                       ],
                     ),
                     SizedBox(height: 10),
@@ -261,7 +267,10 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                       children: tags.map((tagId) {
                         final tagName =
                             widget.allTags[tagId]?['label'] ?? tagId;
-                        return Chip(label: Text(tagName));
+                        return Chip(label: Text(tagName),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),);
                       }).toList(),
                     ),
                     SizedBox(height: 20),

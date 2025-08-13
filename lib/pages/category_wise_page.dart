@@ -1,4 +1,6 @@
 // lib/pages/category_wise_tool_page.dart
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
@@ -19,6 +21,14 @@ class _CategoryWiseToolPageState extends State<CategoryWiseToolPage> {
   void initState() {
     super.initState();
     //selectedId = (Get.arguments?['selectedId'] ?? '') as String;
+  }
+
+  Color _getSoftRandomColor() {
+    final random = Random();
+    final hue = random.nextDouble() * 180; // 0 to 360
+    final hsl = HSLColor.fromAHSL(1.0, hue, 0.4, 0.85);
+    //saturation = 0.4 (soft), lightness = 0.85 (light pastel)
+    return hsl.toColor();
   }
 
   @override
@@ -90,6 +100,7 @@ class _CategoryWiseToolPageState extends State<CategoryWiseToolPage> {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: ChoiceChip(
+          backgroundColor: _getSoftRandomColor(),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           label: Text(label),
           selected: selected,

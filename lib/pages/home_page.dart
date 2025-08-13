@@ -39,7 +39,7 @@ class HomePage extends StatelessWidget {
               GestureDetector(
                 onTap: () => Get.to(() => SearchPage()),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 8, top: 8),
+                  padding: const EdgeInsets.only(left: 12.0, right: 12, bottom: 8, top: 8),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     decoration: BoxDecoration(
@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 12),
               // Categories (horizontal chips)
               Padding(
-                padding: const EdgeInsets.only(left: 16.0),
+                padding: const EdgeInsets.only(left: 12.0),
                 child: SizedBox(
                   height: 40,
                   child: ListView(
@@ -90,7 +90,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 5),
               // Featured tools carousel
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                 child: SectionHeader(
                   title: 'Featured',
                   onSeeAll: () => Get.to(FeaturedAIToolPage(), arguments: {
@@ -100,7 +100,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: PopularCarousel(
@@ -116,7 +116,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 5),
               // Popular tools section
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                 child: SectionHeader(
                   title: 'Popular',
                   onSeeAll: () => Get.to(FeaturedAIToolPage(), arguments: {
@@ -126,7 +126,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                 child: HorizontalToolScroller(
                   items: controller.popularTools,
                   onTap: (tool) => Get.to(() => ToolDetailPage(
@@ -139,7 +139,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 5),
               // Trending tools section
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                 child: SectionHeader(
                   title: 'Trending',
                   onSeeAll: () => Get.to(FeaturedAIToolPage(), arguments: {
@@ -149,7 +149,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                 child: HorizontalToolScroller(
                   items: controller.trendingTools,
                   onTap: (tool) => Get.toNamed('/tool', arguments: {
