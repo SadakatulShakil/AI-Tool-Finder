@@ -85,9 +85,9 @@ class HomeController extends GetxController {
     return currentWishlist.contains(toolId);
   }
 
-  Map<String, dynamic>? getToolById(String id) {
-    return filteredTools.firstWhereOrNull((tool) => tool['id'] == id);
-  }
+  // Map<String, dynamic>? getToolById(String id) {
+  //   return filteredTools.firstWhereOrNull((tool) => tool['id'] == id);
+  // }
 
   bool isInWishlist(String toolId) {
     final userPhone = GetStorage().read('phone');
@@ -132,6 +132,64 @@ class HomeController extends GetxController {
     fetchTags();
     fetchTools();
     getWishlistTools();
+  }
+
+  String tagLabel(String tagId) {
+    final raw = tagsMap[tagId];
+    if (raw is Map && raw['label'] != null) return raw['label'].toString();
+    if (raw is String) return raw;
+    return tagId;
+  }
+
+  bool toolHasTagLabel(Map<String, dynamic> tool, String desiredLabel) {
+    final desired = desiredLabel.trim().toLowerCase();
+    final tagIds = (tool['tags'] ?? []).cast<String>();
+    for (final tid in tagIds) {
+      final lbl = tagLabel(tid).toLowerCase();
+      if (lbl == desired) return true;
+      // also allow raw match just in case DB put "popular" inside tags directly
+      if (tid.toLowerCase() == desired) return true;
+    }
+    return false;
+  }
+
+  List<Map<String, dynamic>> toolsByTagLabel(String label, {int? limit}) {
+    final list = tools
+        .whereType<Map<String, dynamic>>()
+        .where((t) => toolHasTagLabel(t, label))
+        .toList();
+    if (limit != null && list.length > limit) return list.take(limit).toList();
+    return list;
+  }
+
+  // Popular == Recommended For You
+  List<Map<String, dynamic>> get popularTools => toolsByTagLabel('popular');
+  List<Map<String, dynamic>> get trendingTools => toolsByTagLabel('trending');
+
+  Map<String, dynamic>? getToolById(String id) {
+    return tools.cast<Map<String, dynamic>?>().firstWhere(
+          (t) => t?['id'] == id,
+      orElse: () => null,
+    );
+  }
+
+  // Reusable search (name + desc + tags + category)
+  List<Map<String, dynamic>> searchTools({String q = '', String? categoryId}) {
+    final query = q.trim().toLowerCase();
+    return tools.whereType<Map<String, dynamic>>().where((tool) {
+      final name = (tool['name'] ?? '').toString().toLowerCase();
+      final desc = (tool['description'] ?? '').toString().toLowerCase();
+      final tags = (tool['tags'] ?? []).cast<String>()
+          .map((tid) => tagLabel(tid).toLowerCase())
+          .join(' ');
+      final catOk = (categoryId == null || categoryId.isEmpty)
+          ? true
+          : (tool['category'] == categoryId);
+      final textOk = query.isEmpty
+          ? true
+          : ('$name $desc $tags').contains(query);
+      return catOk && textOk;
+    }).toList();
   }
 
   void fetchCategories() async {
