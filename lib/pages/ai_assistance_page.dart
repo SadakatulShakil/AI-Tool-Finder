@@ -8,6 +8,7 @@ import '../controllers/chat_controller.dart';
 class AiAssistancePage extends StatefulWidget {
   final String? date;
   final bool isFromHistory;
+
   AiAssistancePage({this.date, this.isFromHistory = false});
 
   @override
@@ -25,47 +26,71 @@ class _AiAssistancePageState extends State<AiAssistancePage> {
 
     for (var match in matches) {
       if (match.start > lastIndex) {
-        spans.add(TextSpan(text: text.substring(lastIndex, match.start)));
+        spans.add(TextSpan(
+          text: text.substring(lastIndex, match.start),
+          style: const TextStyle(color: Colors.white),
+        ));
       }
       final url = match.group(0)!;
       spans.add(
         TextSpan(
           text: url,
-          style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-          recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse(url)),
+          style: const TextStyle(
+            color: Colors.blueAccent,
+            decoration: TextDecoration.underline,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () async {
+              if (await canLaunchUrl(Uri.parse(url))) {
+                launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+              }
+            },
         ),
       );
       lastIndex = match.end;
     }
 
     if (lastIndex < text.length) {
-      spans.add(TextSpan(text: text.substring(lastIndex)));
+      spans.add(TextSpan(
+        text: text.substring(lastIndex),
+        style: const TextStyle(color: Colors.white),
+      ));
     }
 
     return spans;
   }
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
+  void initState() {
+    super.initState();
     final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    if (widget.isFromHistory) {
-      controller.loadMessagesByDate(widget.date ?? today);
-    } else {
-      controller.loadMessagesByDate(today);
+    controller.loadMessagesByDate(widget.isFromHistory
+        ? (widget.date ?? today)
+        : today);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  void _scrollToBottom() {
+    if (controller.scrollController.hasClients) {
+      controller.scrollController.jumpTo(
+        controller.scrollController.position.maxScrollExtent + 200,
+      );
     }
+  }
 
-    //Scroll to bottom when page open
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (controller.scrollController.hasClients) {
-        controller.scrollController.jumpTo(controller.scrollController.position.maxScrollExtent + 200);
-      }
-    });
-
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: const Text('AI Assistant'),
+        title: const Text('AI Assistance', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF121212),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: Obx(() => Column(
         children: [
@@ -79,38 +104,59 @@ class _AiAssistancePageState extends State<AiAssistancePage> {
                 final isUser = message['sender'] == 'user';
 
                 return Align(
-                  alignment:
-                  isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: isUser
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 6),
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(14),
                     constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.75),
+                      maxWidth: MediaQuery.of(context).size.width * 0.75,
+                    ),
                     decoration: BoxDecoration(
-                      color: isUser
-                          ? Colors.deepPurpleAccent.shade100
-                          : Colors.grey[300],
-                      borderRadius: isUser
-                          ? BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20),
-                              bottomLeft: Radius.circular(20))
-                          : BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20),
-                              bottomRight: Radius.circular(20)),
+                      gradient: isUser
+                          ? LinearGradient(
+                        colors: [
+                          Colors.deepPurpleAccent.shade200,
+                          Colors.deepPurple.shade700,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                          : LinearGradient(
+                        colors: [
+                          Colors.grey.shade800,
+                          Colors.grey.shade700,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(20),
+                        topRight: const Radius.circular(20),
+                        bottomLeft:
+                        isUser ? const Radius.circular(20) : Radius.zero,
+                        bottomRight:
+                        isUser ? Radius.zero : const Radius.circular(20),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        )
+                      ],
                     ),
                     child: SelectableText.rich(
-                      TextSpan(
-                        children: _buildTextWithLinks(message['text'] ?? ''),
-                      ),
+                      TextSpan(children: _buildTextWithLinks(message['text'] ?? '')),
+                      style: const TextStyle(fontSize: 15, height: 1.4),
                     ),
                   ),
                 );
               },
             ),
           ),
-          const Divider(height: 1),
+          const Divider(height: 1, color: Colors.grey),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
@@ -118,13 +164,21 @@ class _AiAssistancePageState extends State<AiAssistancePage> {
                 Expanded(
                   child: TextField(
                     controller: controller.messageController,
-                    onSubmitted: (value) => controller.sendMessage(value),
+                    style: const TextStyle(color: Colors.white),
+                    onSubmitted: (value) {
+                      controller.sendMessage(value);
+                      _scrollToBottom();
+                    },
                     decoration: InputDecoration(
                       hintText: "Ask about AI tool...",
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
                       contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 14),
+                          vertical: 12, horizontal: 16),
+                      filled: true,
+                      fillColor: const Color(0xFF1E1E1E),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                   ),
@@ -132,15 +186,18 @@ class _AiAssistancePageState extends State<AiAssistancePage> {
                 const SizedBox(width: 8),
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: theme.colorScheme.primary,
+                  backgroundColor: Colors.deepPurpleAccent,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () => controller.sendMessage(controller.messageController.text),
+                    onPressed: () {
+                      controller.sendMessage(controller.messageController.text);
+                      _scrollToBottom();
+                    },
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       )),
     );

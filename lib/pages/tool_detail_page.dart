@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tool_finder/pages/webview_view.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../bindings/webview_binding.dart';
 import '../controllers/home_controller.dart';
 
@@ -39,7 +38,8 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
   List<Map<String, dynamic>> get similarTools {
     final currentCategory = currentTool['category'];
     return controller.filteredTools
-        .where((tool) => tool['category'] == currentCategory && tool['id'] != currentToolId)
+        .where((tool) =>
+    tool['category'] == currentCategory && tool['id'] != currentToolId)
         .toList();
   }
 
@@ -50,15 +50,15 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
   }
 
   Widget _buildPricingSection(Map<dynamic, dynamic>? pricing) {
-    if (pricing == null || pricing.isEmpty) return SizedBox.shrink();
+    if (pricing == null || pricing.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 25),
-        Text("💰 Pricing",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        SizedBox(height: 10),
+        const SizedBox(height: 25),
+        const Text("💰 Pricing",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+        const SizedBox(height: 10),
         ...pricing.entries.map((entry) {
           final planName = entry.key;
           final planData = (entry.value is Map)
@@ -66,8 +66,9 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
               : <String, dynamic>{};
 
           return Card(
-            elevation: 3,
-            margin: EdgeInsets.symmetric(vertical: 6),
+            color: const Color(0xFF1E1E1E),
+            elevation: 0,
+            margin: const EdgeInsets.symmetric(vertical: 6),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -78,17 +79,19 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                 children: [
                   Text(
                     "${planName[0].toUpperCase()}${planName.substring(1)} — ${planData['cost'] ?? ''}",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   ...((planData['features'] as List?) ?? [])
                       .map((f) => Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.check_circle,
+                      const Icon(Icons.check_circle,
                           color: Colors.green, size: 18),
-                      SizedBox(width: 6),
-                      Expanded(child: Text(f)),
+                      const SizedBox(width: 6),
+                      Expanded(
+                          child: Text(f,
+                              style: const TextStyle(color: Colors.white70))),
                     ],
                   ))
                       .toList(),
@@ -102,7 +105,7 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
   }
 
   Widget _buildApiSection(Map<dynamic, dynamic>? api) {
-    if (api == null || api.isEmpty) return SizedBox.shrink();
+    if (api == null || api.isEmpty) return const SizedBox.shrink();
 
     final available = api['available'] == true;
     final note = api['note']?.toString() ?? '';
@@ -110,12 +113,13 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 25),
-        Text("🔌 API Information",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        SizedBox(height: 10),
+        const SizedBox(height: 25),
+        const Text("🔌 API Information",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+        const SizedBox(height: 10),
         Card(
-          elevation: 3,
+          color: const Color(0xFF1E1E1E),
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -130,19 +134,19 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                       available ? Icons.check_circle : Icons.cancel,
                       color: available ? Colors.green : Colors.red,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       available ? "Available" : "Not Available",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
                     ),
                   ],
                 ),
                 if (note.isNotEmpty) ...[
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     note,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    style: const TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                 ]
               ],
@@ -162,6 +166,7 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
     final tags = (tool['tags'] as List?)?.cast<String>() ?? [];
 
     return Scaffold(
+      backgroundColor: const Color(0xFF121212),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -179,12 +184,12 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                   ),
                 ),
 
-                // Dark gradient overlay (for better icon visibility)
+                // Dark gradient overlay
                 Container(
                   height: 200,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.black54, Colors.transparent],
+                      colors: [Colors.black.withOpacity(0.7), Colors.transparent],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -203,7 +208,7 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                       CircleAvatar(
                         backgroundColor: Colors.black54,
                         child: IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () => Get.back(),
                         ),
                       ),
@@ -235,49 +240,65 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(tool['name'] ?? 'Tool Name',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 10),
+                        style: const TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                    const SizedBox(height: 10),
                     Text(tool['description'] ?? 'No description',
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 20),
+                        style: const TextStyle(fontSize: 16, color: Colors.white70)),
+                    Divider(
+                      color: Colors.white24,
+                      thickness: 1,
+                      height: 20,
+                    ),
                     Row(
                       children: [
                         Chip(
-                          label: Text(
-                              tool['isFree'] == true ? 'Free' : 'Paid'),
+                          label: Text(tool['isFree'] == true ? 'Free' : 'Paid'),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
                           backgroundColor: tool['isFree'] == true
                               ? Colors.green
                               : Colors.red,
-                          labelStyle: TextStyle(color: Colors.white),
+                          labelStyle: const TextStyle(color: Colors.white),
                         ),
-                        SizedBox(width: 10),
-                        Chip(label: Text(categoryName)
-                          ,shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),),
+                        const SizedBox(width: 10),
+                        Chip(
+                          label: Text(categoryName),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          backgroundColor: Colors.blueGrey.shade700,
+                          labelStyle: const TextStyle(color: Colors.white),
+                        ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Wrap(
                       spacing: 8,
                       children: tags.map((tagId) {
                         final tagName =
                             widget.allTags[tagId]?['label'] ?? tagId;
-                        return Chip(label: Text(tagName),
+                        return Chip(
+                          label: Text(tagName),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                          ),);
+                          ),
+                          backgroundColor: Colors.blueGrey.shade800,
+                          labelStyle: const TextStyle(color: Colors.white),
+                        );
                       }).toList(),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton.icon(
-                      icon: Icon(Icons.open_in_new),
-                      label: Text('Visit Tool Website'),
-                      onPressed: () => Get.to(() => WebviewView(),
+                      icon: const Icon(Icons.open_in_new, color: Colors.white),
+                      label: const Text('Visit Tool Website', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      ),
+                      onPressed: () => Get.to(() => const WebviewView(),
                           binding: WebviewBinding(),
                           arguments: tool,
                           transition: Transition.rightToLeft),
@@ -291,12 +312,12 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
 
                     // Similar Tools
                     if (similarTools.isNotEmpty) ...[
-                      SizedBox(height: 10),
-                      Text(
+                      const SizedBox(height: 20),
+                      const Text(
                         '🛠️ Similar Tools',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -304,34 +325,43 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                             return GestureDetector(
                               onTap: () => _updateTool(simTool['id']),
                               child: Container(
-                                width: 200, // adjust width as needed
-                                margin: EdgeInsets.only(right: 8),
-                                child: Card(
-                                  elevation: 2,
-                                  color: Colors.white,
+                                width: 200,
+                                margin: const EdgeInsets.only(right: 8),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.white.withOpacity(0.3), Colors.white.withOpacity(0.2)],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        simTool['logo'] != null
-                                            ? Image.network(
-                                          simTool['logo'],
-                                          width: 40,
-                                          height: 40,
-                                        )
-                                            : Icon(Icons.extension, size: 40),
-                                        SizedBox(height: 8),
+                                        CircleAvatar(
+                                          radius: 24,
+                                          backgroundImage: (simTool['logo'] ?? '').toString().isNotEmpty
+                                              ? NetworkImage(simTool['logo'])
+                                              : null,
+                                          child: (simTool['logo'] ?? '').toString().isEmpty
+                                              ? const Icon(Icons.extension)
+                                              : null,
+                                        ),
+                                        const SizedBox(height: 8),
                                         Text(
                                           simTool['name'] ?? '',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        SizedBox(height: 4),
+                                        const SizedBox(height: 4),
                                         Text(
                                           simTool['description'] ?? '',
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(color: Colors.white70),
                                         ),
                                       ],
                                     ),

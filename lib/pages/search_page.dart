@@ -1,8 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tool_finder/pages/tool_detail_page.dart';
+import 'dart:math';
 import '../controllers/home_controller.dart';
+import '../widgets/category_chips.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,38 +17,40 @@ class _SearchPageState extends State<SearchPage> {
   final textCtrl = TextEditingController();
   String selectedCat = '';
 
-  Color _getSoftRandomColor() {
-    final random = Random();
-    final hue = random.nextDouble() * 180; // 0 to 360
-    final hsl = HSLColor.fromAHSL(1.0, hue, 0.4, 0.85);
-    //saturation = 0.4 (soft), lightness = 0.85 (light pastel)
-    return hsl.toColor();
-  }
-
   @override
   Widget build(BuildContext context) {
     final isSearching = textCtrl.text.trim().isNotEmpty;
-    final results =
-    controller.searchTools(q: textCtrl.text, categoryId: selectedCat);
+    final results = controller.searchTools(q: textCtrl.text, categoryId: selectedCat);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Search')),
+      backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        title: const Text('Search', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF121212),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: Column(
         children: [
           // 🔍 Search Input
           Padding(
-            padding: const EdgeInsets.only(
-                left: 16, right: 16, top: 5, bottom: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: TextField(
               controller: textCtrl,
+              style: const TextStyle(color: Colors.white),
               textInputAction: TextInputAction.search,
               onChanged: (_) => setState(() {}),
               onSubmitted: (_) => setState(() {}),
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.grey[850],
+                prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 suffixIcon: textCtrl.text.isNotEmpty
                     ? IconButton(
-                  icon: const Icon(Icons.clear),
+                  icon: const Icon(Icons.clear, color: Colors.white70, size: 20),
                   onPressed: () {
                     textCtrl.clear();
                     setState(() {});
@@ -55,8 +58,11 @@ class _SearchPageState extends State<SearchPage> {
                 )
                     : null,
                 hintText: 'Search tools…',
+                hintStyle: const TextStyle(color: Colors.white38),
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
@@ -65,29 +71,26 @@ class _SearchPageState extends State<SearchPage> {
           // 📂 Horizontal Categories (only if not searching)
           if (!isSearching)
             SizedBox(
-              height: 48,
+              height: 42,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 children: [
-                  _CatPill(
+                  CategoryChip(
                     label: 'All',
-                    color: _getSoftRandomColor(),
                     selected: selectedCat.isEmpty,
                     onTap: () => setState(() => selectedCat = ''),
                   ),
-                  ...controller.categories.map(
-                        (c) => Padding(
+                  ...controller.categories.map((c) {
+                    return Padding(
                       padding: const EdgeInsets.only(left: 8),
-                      child: _CatPill(
+                      child: CategoryChip(
                         label: c['name'] ?? '',
-                        color: _getSoftRandomColor(),
                         selected: selectedCat == c['id'],
-                        onTap: () =>
-                            setState(() => selectedCat = c['id']),
+                        onTap: () => setState(() => selectedCat = c['id']),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -102,64 +105,52 @@ class _SearchPageState extends State<SearchPage> {
               itemBuilder: (context, index) {
                 final t = results[index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                   child: Card(
+                    color: const Color(0xFF1E1E1E),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: ListTile(
                       leading: t['logo'] != null
-                          ? Image.network(t['logo'],
-                          width: 40, height: 40)
-                          : const Icon(Icons.extension),
-                      title: Text(t['name'] ?? ''),
+                          ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          t['logo'],
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                          : const Icon(Icons.extension, color: Colors.white70),
+                      title: Text(
+                        t['name'] ?? '',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      ),
                       subtitle: Text(
                         t['description'] ?? '',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.white54),
                       ),
-                      onTap: () => Get.toNamed('/tool', arguments: {
-                        'toolId': t['id'],
-                        'allCategories': controller.categoriesMap,
-                        'allTags': controller.tagsMap,
-                      }),
+                      onTap: () => Get.to(() => ToolDetailPage(
+                        initialToolId: t['id'],
+                        allCategories: controller.categoriesMap,
+                        allTags: controller.tagsMap,
+                      )),
                     ),
                   ),
                 );
               },
             )
                 : const Center(
-              child: Text('No tools found'),
+              child: Text(
+                'No tools found',
+                style: TextStyle(color: Colors.white54),
+              ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _CatPill extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  final Color color;
-
-  const _CatPill({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ChoiceChip(
-      label: Text(label),
-      selected: selected,
-      selectedColor: color,
-      onSelected: (_) => onTap(),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
       ),
     );
   }

@@ -10,9 +10,11 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+        Text(title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
         const Spacer(),
-        TextButton(onPressed: onSeeAll, child: const Text('See All')),
+        TextButton(onPressed: onSeeAll, child: Container(
+            child: const Text('See All', style: TextStyle(fontSize: 14, color: Colors.teal)))),
       ],
     );
   }

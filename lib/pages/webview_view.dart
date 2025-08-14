@@ -10,13 +10,6 @@ class WebviewView extends GetView<WebviewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   titleSpacing: 0,
-      //   title: Obx(() => Text(
-      //     controller.title.value,
-      //     style: TextStyle(fontSize: 18),
-      //   )),
-      // ),
       body: SafeArea(
         child: Obx(() {
           if (!controller.hasInternet.value) {

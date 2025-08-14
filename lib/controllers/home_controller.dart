@@ -12,11 +12,33 @@ class HomeController extends GetxController {
   final database = FirebaseDatabase.instance;
   var usersWishlist = <String, List<String>>{}.obs;
   var currentWishlist = <String>[].obs;
+  // Time greeting
+  final initTime = "Good Morning".obs;
 
   @override
   void onInit() {
     super.onInit();
+    getTime();
     fetchHomeData();
+  }
+
+  getTime() {
+    var currentHour = DateTime.timestamp();
+    var hour = int.parse(currentHour.toString().substring(11, 13)) + 6;
+    if(hour > 23) {
+      hour = hour - 23;
+    }
+    if (hour >= 5 && hour < 12) {
+      initTime.value = "Good Morning";
+    } else if (hour >= 12 && hour < 15) {
+      initTime.value = "Good Noon";
+    } else if (hour >= 15 && hour < 17) {
+      initTime.value = "Good After Noon";
+    } else if (hour >= 17 && hour < 19) {
+      initTime.value = "Good Evening";
+    } else {
+      initTime.value = "Good Night";
+    }
   }
 
   void wishlistTool(String toolId) async {

@@ -12,7 +12,16 @@ class ChatHistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Chat History")),
+      backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        title: const Text('AI Chat History', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF121212),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -24,21 +33,30 @@ class ChatHistoryPage extends StatelessWidget {
           return const Center(child: Text("No chat history found."));
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(16),
+        return ListView.builder(
           itemCount: dates.length,
-          separatorBuilder: (_, __) => const Divider(),
           itemBuilder: (context, index) {
             final date = dates[index];
-            return ListTile(
-              title: Text(date),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () async {
-                //final messages = await controller.fetchMessagesByDate(date);
-                //print('messages: $messages');
-                Get.delete<ChatController>(); // 🧹 clear old state
-                Get.to(() => AiAssistancePage(date: date, isFromHistory: true));
-              },
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+              child: Card(
+                color: const Color(0xFF1E1E1E),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.teal.shade700,
+                      child: const Icon(Icons.chat, color: Colors.white70)),
+                  title: Text('Chat history ${index+1}' , style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                  subtitle: Text("View chat history for $date", style: const TextStyle(color: Colors.white70)),
+                  trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 20),
+                        onTap: () async {
+                          Get.delete<ChatController>(); // 🧹 clear old state
+                          Get.to(() => AiAssistancePage(date: date, isFromHistory: true));
+                        },
+                ),
+              ),
             );
           },
         );

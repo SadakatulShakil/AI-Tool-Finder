@@ -19,9 +19,15 @@ class HorizontalToolScroller extends StatelessWidget {
             onTap: () => onTap(t),
             child: SizedBox(
                 width: 120,
-                child: Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.white.withOpacity(0.3), Colors.white.withOpacity(0.2)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Stack(
                     children: [
                       // Main content (centered)
@@ -44,7 +50,7 @@ class HorizontalToolScroller extends StatelessWidget {
                             t['name'] ?? '',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontWeight: FontWeight.w600),
+                            style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 14),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 4),
@@ -54,7 +60,7 @@ class HorizontalToolScroller extends StatelessWidget {
                               t['description'] ?? '',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 12, color: Colors.black54),
+                              style: const TextStyle(fontSize: 12, color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
                           ),
