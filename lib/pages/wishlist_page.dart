@@ -27,7 +27,7 @@ class WishlistPage extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("Your wishlist is empty."));
+            return Center(child: Text("Your wishlist is empty.", style: TextStyle(color: Colors.white70, fontSize: 16)));
           }
 
           final wishlistTools = snapshot.data!;

@@ -30,7 +30,7 @@ class ChatHistoryPage extends StatelessWidget {
         final dates = controller.historyDates;
 
         if (dates.isEmpty) {
-          return const Center(child: Text("No chat history found."));
+          return const Center(child: Text("No chat history found.", style: TextStyle(color: Colors.white70, fontSize: 16)));
         }
 
         return ListView.builder(

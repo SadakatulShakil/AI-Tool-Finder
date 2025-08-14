@@ -9,42 +9,53 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF121212),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Login to Your Account',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            // App Logo
+            Image.asset(
+              'assets/logo/icon.png',
+              height: 100,
+              width: 100,
+            ),
+            Text('AI Tool Hub',
+              style: TextStyle(fontSize: 12, color: Colors.white),
             ),
             SizedBox(height: 20),
-            TextField(
-              controller: controller.phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4),
-                  borderSide: BorderSide(color: Colors.deepPurpleAccent),
-                ),
-              ),
-              cursorColor: Colors.deepPurpleAccent,
+            Text('Login to Explore AI Tools',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500, color: Colors.white),
             ),
+            SizedBox(height: 20),
+            _buildField("Phone Number", controller.phoneController),
             SizedBox(height: 16),
             TextField(
               controller: controller.dobController,
               readOnly: true,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                  labelText: 'Date of Birth',
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4),
-                  borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                labelText: 'Date of Birth',
+                labelStyle: const TextStyle(color: Colors.white70),
+                filled: true,
+                fillColor: const Color(0xFF1E1E1E),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.grey, width: 1),
                 ),
-                suffixIcon: Icon(Icons.calendar_today, color: Colors.deepPurpleAccent),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide:
+                  const BorderSide(color: Colors.grey, width: 1),
+                ),
+                suffixIcon: const Icon(Icons.calendar_today,
+                    color: Colors.tealAccent, size: 20),
               ),
-              cursorColor: Colors.deepPurpleAccent,
+              cursorColor: Colors.tealAccent,
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
@@ -67,12 +78,17 @@ class LoginPage extends StatelessWidget {
                   ),
                 );
               }
-              return ElevatedButton(
+              return  ElevatedButton.icon(
+                icon: const Icon(Icons.save, color: Colors.white),
+                label: const Text("Login",
+                    style: TextStyle(color: Colors.white)),
                 onPressed: controller.loginUser,
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
+                  backgroundColor: Colors.tealAccent.shade400,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  minimumSize: const Size(double.infinity, 50),
                 ),
-                child: Text('Login'),
               );
             }),
 
@@ -91,6 +107,36 @@ class LoginPage extends StatelessWidget {
             }),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildField(String label, TextEditingController controller,
+      {bool readOnly = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextField(
+        controller: controller,
+        readOnly: readOnly,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
+          ),
+          labelStyle: const TextStyle(color: Colors.white70),
+          filled: true,
+          fillColor: const Color(0xFF1E1E1E),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
+          ),
+        ),
+        cursorColor: Colors.tealAccent,
       ),
     );
   }
