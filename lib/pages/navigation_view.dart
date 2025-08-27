@@ -4,8 +4,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../controllers/navigation_controller.dart';
 import 'ai_assistance_page.dart';
 
-class NavigationView extends GetView<NavigationController> {
+class NavigationView extends StatefulWidget {
   const NavigationView({super.key});
+
+  @override
+  State<NavigationView> createState() => _NavigationViewState();
+}
+
+class _NavigationViewState extends State<NavigationView> {
+  late NavigationController controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller = Get.put(NavigationController());
+  }
 
   @override
   Widget build(BuildContext context) {

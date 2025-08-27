@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:tool_finder/pages/webview_view.dart';
 import '../bindings/webview_binding.dart';
 import '../controllers/home_controller.dart';
+import '../services/ad_service.dart';
 
 class ToolDetailPage extends StatefulWidget {
   final String initialToolId;
@@ -29,6 +30,8 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
     super.initState();
     currentToolId = widget.initialToolId;
     controller = Get.find<HomeController>();
+    // Preload the interstitial ad when the page loads
+    AdService.loadInterstitialAd();
   }
 
   Map<String, dynamic> get currentTool {
@@ -290,6 +293,7 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                       }).toList(),
                     ),
                     const SizedBox(height: 20),
+                    // In your details page
                     ElevatedButton.icon(
                       icon: const Icon(Icons.open_in_new, color: Colors.white),
                       label: const Text('Visit Tool Website', style: TextStyle(color: Colors.white)),
@@ -298,10 +302,22 @@ class _ToolDetailPageState extends State<ToolDetailPage> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       ),
-                      onPressed: () => Get.to(() => const WebviewView(),
-                          binding: WebviewBinding(),
-                          arguments: tool,
-                          transition: Transition.rightToLeft),
+                      onPressed: () async {
+                        // Show interstitial ad first
+                        final adShown = await AdService.showInterstitialAd();
+
+                        // If ad was shown, wait for it to complete before navigating
+                        if (adShown) {
+                          // Add a small delay to ensure ad is properly displayed
+                          await Future.delayed(const Duration(seconds: 1));
+                        }
+
+                        // Navigate to webview
+                        Get.to(() => const WebviewView(),
+                            binding: WebviewBinding(),
+                            arguments: tool,
+                            transition: Transition.rightToLeft);
+                      },
                     ),
 
                     // Pricing Section

@@ -107,9 +107,6 @@ class HomeController extends GetxController {
     return currentWishlist.contains(toolId);
   }
 
-  // Map<String, dynamic>? getToolById(String id) {
-  //   return filteredTools.firstWhereOrNull((tool) => tool['id'] == id);
-  // }
 
   bool isInWishlist(String toolId) {
     final userPhone = GetStorage().read('phone');
@@ -186,6 +183,7 @@ class HomeController extends GetxController {
 
   // Popular == Recommended For You
   List<Map<String, dynamic>> get popularTools => toolsByTagLabel('popular');
+  List<Map<String, dynamic>> get featuredTools => toolsByTagLabel('featured');
   List<Map<String, dynamic>> get trendingTools => toolsByTagLabel('trending');
 
   Map<String, dynamic>? getToolById(String id) {

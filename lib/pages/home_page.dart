@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:tool_finder/widgets/banner_add_widget.dart';
 
 import '../controllers/auth_controller.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/app_drawer_widget.dart';
 import '../widgets/category_chips.dart';
+import '../widgets/native_add_widget.dart';
 import '../widgets/popular_carousel.dart';
 import '../widgets/section_header.dart';
 import '../widgets/tool_scroller.dart';
@@ -69,6 +71,14 @@ class HomePage extends StatelessWidget {
       body: Obx(() {
         if (controller.tools.isEmpty) {
           return const Center(child: CircularProgressIndicator(color: Colors.tealAccent));
+        }
+
+        final itemsWithAd = List<dynamic>.from(controller.popularTools);
+
+// Insert ad at random index
+        if (itemsWithAd.isNotEmpty) {
+          final randomIndex = DateTime.now().millisecondsSinceEpoch % itemsWithAd.length;
+          itemsWithAd.insert(randomIndex, const NativeAdCard());
         }
 
         return RefreshIndicator(
@@ -144,7 +154,7 @@ class HomePage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: PopularCarousel(
-                    items: controller.popularTools,
+                    items: itemsWithAd,
                     onTap: (tool) => Get.to(() => ToolDetailPage(
                       initialToolId: tool['id'],
                       allCategories: controller.categoriesMap,
@@ -153,7 +163,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 5),
 
               // Popular
               _buildSection(
@@ -162,6 +172,10 @@ class HomePage extends StatelessWidget {
                 items: controller.popularTools,
               ),
 
+              Padding(
+                padding: const EdgeInsets.only(top: 5.0),
+                child: BannerAdWidget(),
+              ),
               // Trending
               _buildSection(
                 title: 'Trending',

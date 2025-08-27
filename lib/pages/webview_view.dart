@@ -31,7 +31,7 @@ class WebviewView extends GetView<WebviewController> {
                       width: 120,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () => controller.onInit(),
+                        onPressed: () => controller.reloadPage(),
                         child: Text("Retry", style: TextStyle(fontSize: 14, color: Colors.white)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurpleAccent,
